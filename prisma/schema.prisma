@@ -1,0 +1,71 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  password String
+  role     Role
+}
+
+model Subject {
+  id       Int       @id @default(autoincrement())
+  name     String
+  chapters Chapter[]
+  createdAt DateTime @default(now())
+}
+
+model Chapter {
+  id        Int        @id @default(autoincrement())
+  title     String
+  subject   Subject    @relation(fields: [subjectId], references: [id])
+  subjectId Int
+  questions Question[]
+  questionPapers QuestionPaper[]
+  createdAt DateTime @default(now())
+}
+
+model Question {
+  id        Int        @id @default(autoincrement())
+  content   String
+  type      QuestionType
+  chapter   Chapter    @relation(fields: [chapterId], references: [id])
+  chapterId Int
+  options   Option[]
+  questionPapers QuestionPaper[] @relation("QuestionToQuestionPaper") // Inverse relation added
+  createdAt DateTime @default(now())
+}
+
+model Option {
+  id         Int      @id @default(autoincrement())
+  content    String
+  isCorrect  Boolean
+  question   Question @relation(fields: [questionId], references: [id])
+  questionId Int
+}
+
+model QuestionPaper {
+  id        Int      @id @default(autoincrement())
+  name      String
+  questions Question[] @relation("QuestionToQuestionPaper")
+  chapters Chapter[]
+  createdAt DateTime @default(now())
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+}
+
+enum QuestionType {
+  DPP
+  TEXTUAL
+}
