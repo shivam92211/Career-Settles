@@ -70,13 +70,17 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } } // Correctly typed params
 ) {
   try {
-    console.log({ params });
+    const url = request.nextUrl.href
+    console.log({ url });
+    const id = request.nextUrl.pathname.split('/')[3];
+    console.log({ id });
+
+    return NextResponse.json({ message: 'Hello from the API!' });
 
     // Ensure params is resolved before accessing its properties
-    const chapterId = parseInt(params.id);
+    const chapterId = parseInt(id);
     if (isNaN(chapterId)) {
       return NextResponse.json({ error: 'Invalid chapter ID' }, { status: 400 });
     }

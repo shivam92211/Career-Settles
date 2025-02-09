@@ -2,20 +2,22 @@
 
 // src/app/api/chapters/[id]/route.ts
 
-import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { NextResponse, NextRequest } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
 
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } } // Destructure params
+  request: NextRequest,
 ) {
-  const prisma = new PrismaClient();
 
   try {
+    const url = request.nextUrl.href
+    console.log({ url });
+    const id = request.nextUrl.pathname.split('/')[3];
+    console.log({ id });
     // Validate and parse the ID
-    const chapterId = parseInt(params.id);
+    const chapterId = parseInt(id);
     if (isNaN(chapterId)) {
       return NextResponse.json({ error: 'Invalid chapter ID' }, { status: 400 });
     }

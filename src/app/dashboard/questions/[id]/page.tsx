@@ -8,8 +8,9 @@ async function getQuestion(id: string) {
     return data as Question;
 }
 
-export default async function QuestionDetailsPage({ params }: { params: { id: string } }) {
-    const question = await getQuestion(params.id);
+export default async function QuestionDetailsPage() {
+    const id = window.location.pathname.split("/")[3];
+    const question = await getQuestion(id);
     return (
         <div>
             <h1>Question Details</h1>

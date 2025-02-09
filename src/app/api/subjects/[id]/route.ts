@@ -120,18 +120,17 @@
 // }
 
 
-import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { NextResponse, NextRequest } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } } // Destructure params
+  req: NextRequest
 ) {
-  const prisma = new PrismaClient();
   try {
+    const id = req.nextUrl.pathname.split('/')[3];
     // Ensure params is resolved before accessing params.id
-    const subjectId = parseInt(params.id); // Parse the ID from params
+    const subjectId = parseInt(id); // Parse the ID from params
     if (isNaN(subjectId)) {
       return NextResponse.json({ error: 'Invalid subject ID' }, { status: 400 });
     }
