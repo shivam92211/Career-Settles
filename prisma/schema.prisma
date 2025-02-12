@@ -62,11 +62,12 @@ model Option {
 }
 
 model QuestionPaper {
-  id        Int      @id @default(autoincrement())
-  name      String
-  questions Question[] @relation("QuestionToQuestionPaper")
-  chapters Chapter[]
-  createdAt DateTime @default(now())
+  id         Int      @id @default(autoincrement())
+  name       String
+  filePath   String?    // Path to the saved PDF file
+  questions  Question[] @relation("QuestionToQuestionPaper")
+  chapters   Chapter[]
+  createdAt  DateTime @default(now())
 }
 
 enum Role {

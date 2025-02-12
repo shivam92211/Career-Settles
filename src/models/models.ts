@@ -50,6 +50,7 @@ export interface QuestionPaper {
     name: string;
     questions?: Question[];
     chapters?: Chapter[];
+    createdAt:Date | string;
   }
 
 export interface Option {

@@ -36,8 +36,8 @@ export default function Navbar() {
                         </Link>
                     </li>
                     <li>
-                        <Link href="#" className="hover:text-blue-200 transition-colors duration-200">
-                            Contact
+                        <Link href="/question-papers" className="hover:text-blue-200 transition-colors duration-200">
+                            Paper
                         </Link>
                     </li>
                 </ul>
@@ -82,10 +82,10 @@ export default function Navbar() {
                         </li>
                         <li>
                             <Link
-                                href="#"
+                                href="/question-papers"
                                 className="block p-2 hover:bg-blue-500 rounded transition-colors duration-200"
                             >
-                                Contact
+                                Paper
                             </Link>
                         </li>
                     </ul>

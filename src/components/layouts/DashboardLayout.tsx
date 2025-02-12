@@ -71,14 +71,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                             Questions
                         </Link>
                     </li>
-                    <li>
-                        <Link
-                            href="/dashboard/question-papers"
-                            className="flex items-center p-2 hover:bg-gray-100 rounded transition-colors duration-200"
-                        >
-                            Question Papers
-                        </Link>
-                    </li>
+                    
                 </ul>
                 <Button onClick={() => signOut()} className="w-full mt-4">
                     Sign Out

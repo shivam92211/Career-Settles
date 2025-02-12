@@ -1,8 +1,37 @@
 // src/app/api/questions/route.ts
 
-
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+
+
+export async function GET(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const chapterId = searchParams.get('chapterId');
+    const subjectId = searchParams.get('subjectId');
+    const where = {};
+    if (chapterId) where['chapterId'] = parseInt(chapterId);
+    if (subjectId) where['chapter'] = { subjectId: parseInt(subjectId) };
+
+    const questions = await prisma.question.findMany({
+      where,
+      include: {
+        chapter: {
+          include: {
+            subject: true,
+          },
+        },
+        options: true, // Include the options for each question
+      },
+    });
+
+    return NextResponse.json(questions);
+  } catch (error) {
+    console.error('Error fetching questions:', error?.message || 'Unknown error');
+    return NextResponse.json({ error: 'Failed to fetch questions' }, { status: 500 });
+  }
+}
+
 
 // POST request to create a new question
 export async function POST(req: Request) {
@@ -42,20 +71,3 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
-  try {
-    const questions = await prisma.question.findMany({
-      include: {
-        chapter: true, // Include chapter details if needed
-      },
-    });
-
-    return NextResponse.json(questions);
-  } catch (error) {
-    console.error('Error fetching questions:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch questions' },
-      { status: 500 }
-    );
-  }
-}
