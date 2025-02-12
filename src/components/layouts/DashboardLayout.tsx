@@ -1,74 +1,3 @@
-// 'use client';
-// import { useSession, signOut } from "next-auth/react";
-// import Link from "next/link";
-// import { Button } from "@/components/ui/button"; // Assuming you have a Button component from shadcn/ui
-// import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"; // Assuming you have Card components from shadcn/ui
-// import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"; // Assuming you have Avatar components from shadcn/ui
-
-// const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
-//     const { data: session } = useSession();
-
-//     if (!session) {
-//         return <div>Please Login</div>;
-//     }
-
-//     return (
-//         <div className="flex h-screen bg-gray-100">
-//             {/* Sidebar */}
-//             <aside className="w-64 bg-white shadow-lg p-4">
-//                 <div className="flex items-center mb-6">
-//                     <Avatar className="mr-2">
-//                         <AvatarImage src={session.user?.image || ""} />
-//                         <AvatarFallback>{session.user?.name?.charAt(0)}</AvatarFallback>
-//                     </Avatar>
-//                     <h2 className="text-lg font-bold">Dashboard</h2>
-//                 </div>
-//                 <ul className="space-y-2">
-//                     <li>
-//                         <Link href="/dashboard/subjects" className="block p-2 hover:bg-gray-100 rounded">
-//                             Subjects
-//                         </Link>
-//                     </li>
-//                     <li>
-//                         <Link href="/dashboard/chapters" className="block p-2 hover:bg-gray-100 rounded">
-//                             Chapters
-//                         </Link>
-//                     </li>
-//                     <li>
-//                         <Link href="/dashboard/questions" className="block p-2 hover:bg-gray-100 rounded">
-//                             Questions
-//                         </Link>
-//                     </li>
-//                     <li>
-//                         <Link href="/dashboard/question-papers" className="block p-2 hover:bg-gray-100 rounded">
-//                             Question Papers
-//                         </Link>
-//                     </li>
-//                 </ul>
-//                 <Button onClick={() => signOut()} className="w-full mt-4">
-//                     Sign Out
-//                 </Button>
-//             </aside>
-
-//             {/* Main Content */}
-//             <main className="flex-1 p-6 overflow-y-auto">
-//                 <Card>
-//                     <CardHeader>
-//                         <CardTitle>Welcome back, {session.user?.name}!</CardTitle>
-//                         <CardDescription>Here's what's happening today.</CardDescription>
-//                     </CardHeader>
-//                     <CardContent>
-//                         {children}
-//                     </CardContent>
-//                 </Card>
-//             </main>
-//         </div>
-//     );
-// };
-
-// export default DashboardLayout;
-
-
 'use client';
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
@@ -110,6 +39,14 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                     <h2 className="text-lg font-bold">Dashboard</h2>
                 </div>
                 <ul className="space-y-2">
+                    <li>
+                        <Link
+                            href="/dashboard/classes"
+                            className="flex items-center p-2 hover:bg-gray-100 rounded transition-colors duration-200"
+                        >
+                            Class
+                        </Link>
+                    </li>
                     <li>
                         <Link
                             href="/dashboard/subjects"

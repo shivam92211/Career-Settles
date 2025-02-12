@@ -1,23 +1,50 @@
-'use client';
+// src/app/dashboard/subjects/create/page.tsx
 
-import { useState } from 'react';
+'use client';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button'; // shadcn/ui Button
+import { Input } from '@/components/ui/input'; // shadcn/ui Input
+import { Label } from '@/components/ui/label'; // shadcn/ui Label
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'; // shadcn/ui Select
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card'; // shadcn/ui Card
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { toast } from 'sonner'; // For toast notifications
 import Link from 'next/link';
+import { Class } from '@/models/models'; // Import the Class model
 
 export default function CreateSubjectPage() {
-  const [name, setName] = useState('');
+  const [subjectName, setSubjectName] = useState(''); // State for subject name
+  const [classId, setClassId] = useState<number | null>(null); // State for selected class ID
+  const [classes, setClasses] = useState<Class[]>([]); // State for list of classes
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+  // Fetch all classes on component mount
+  useEffect(() => {
+    const fetchClasses = async () => {
+      try {
+        const res = await fetch('/api/classes');
+        const data = await res.json();
+        setClasses(data);
+      } catch (error) {
+        console.error('Error fetching classes:', error);
+        toast.error('Failed to fetch classes. Please try again.'); // Show toast notification
+      }
+    };
+    fetchClasses();
+  }, []);
+
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+
+    if (!classId) {
+      toast.error('Please select a class.'); // Show toast notification
+      setIsLoading(false);
+      return;
+    }
 
     try {
       const res = await fetch('/api/subjects', {
@@ -25,18 +52,19 @@ export default function CreateSubjectPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ className: classes.find((cls) => cls.id === classId)?.name, subjectName }), // Send both fields
       });
 
       if (res.ok) {
-        toast.success('Subject created successfully!');
+        toast.success('Subject created successfully!'); // Show success toast
         router.push('/dashboard/subjects');
       } else {
-        toast.error('Failed to create subject. Please try again.');
-        console.error('Failed to create subject');
+        const errorData = await res.json();
+        toast.error(errorData.error || 'Failed to create subject. Please try again.');
+        console.error('Failed to create subject:', errorData.error);
       }
     } catch (error) {
-      toast.error('An error occurred. Please try again.');
+      toast.error('An error occurred. Please try again.'); // Show error toast
       console.error('Error creating subject:', error);
     } finally {
       setIsLoading(false);
@@ -55,17 +83,41 @@ export default function CreateSubjectPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Class Dropdown */}
               <div className="space-y-2">
-                <Label htmlFor="name">Subject Name</Label>
+                <Label htmlFor="class">Class</Label>
+                <Select
+                  value={classId?.toString() || ''}
+                  onValueChange={(value) => setClassId(parseInt(value))}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a class" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {classes.map((cls) => (
+                      <SelectItem key={cls.id} value={cls.id.toString()}>
+                        {cls.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Subject Name Field */}
+              <div className="space-y-2">
+                <Label htmlFor="subjectName">Subject Name</Label>
                 <Input
-                  id="name"
+                  id="subjectName"
                   type="text"
-                  placeholder="Enter subject name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter subject name (e.g., Mathematics)"
+                  value={subjectName}
+                  onChange={(e) => setSubjectName(e.target.value)}
                   required
                 />
               </div>
+
+              {/* Submit Button */}
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? 'Creating...' : 'Create Subject'}
               </Button>

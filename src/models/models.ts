@@ -5,6 +5,13 @@ export interface Subject {
     name: string;
     chapters?: Chapter[];
   }
+
+export interface Class {
+    id: number; // Unique identifier for the class
+    name: string; // Name of the class (e.g., "8th", "9th")
+    createdAt: Date; // Timestamp when the class was created
+    subjects?: Subject[]; // Optional list of subjects associated with the class
+  }
   
 export interface Option {
       id: number;

@@ -58,19 +58,6 @@ export async function PUT(req: NextRequest ) {
     }
   }
 
-// export async function DELETE(req: Request, { params }: { params: { id: string } }) {
-//   try {
-//     await prisma.question.delete({
-//       where: { id: parseInt(params.id) },
-//     });
-//     return NextResponse.json({ message: "Question deleted" });
-//   } catch (error) {
-//     console.error("Error deleting question:", error);
-//     return NextResponse.json({ error: "Failed to delete question" }, { status: 500 });
-//   }
-// }
-
-
 
 
 export async function DELETE(

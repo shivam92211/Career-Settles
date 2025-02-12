@@ -16,13 +16,34 @@ export default function ChapterDetailsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // useEffect(() => {
+  //   const fetchChapterAndQuestions = async () => {
+  //     try {
+  //       // Fetch chapter details
+  //       const chapterResponse = await axios.get(`/api/chapters/${id}`);
+  //       setChapter(chapterResponse.data);
+
+  //       // Fetch questions related to the chapter
+  //       const questionsResponse = await axios.get(`/api/chapters/${id}/questions`);
+  //       setQuestions(questionsResponse.data);
+  //     } catch (error) {
+  //       console.error('Error fetching data:', error);
+  //       setError('Failed to fetch data'); // Set error message
+  //     } finally {
+  //       setIsLoading(false); // Set loading to false
+  //     }
+  //   };
+
+  //   fetchChapterAndQuestions();
+  // }, [id]);
+
   useEffect(() => {
     const fetchChapterAndQuestions = async () => {
       try {
         // Fetch chapter details
         const chapterResponse = await axios.get(`/api/chapters/${id}`);
         setChapter(chapterResponse.data);
-
+  
         // Fetch questions related to the chapter
         const questionsResponse = await axios.get(`/api/chapters/${id}/questions`);
         setQuestions(questionsResponse.data);
@@ -33,7 +54,6 @@ export default function ChapterDetailsPage() {
         setIsLoading(false); // Set loading to false
       }
     };
-
     fetchChapterAndQuestions();
   }, [id]);
 

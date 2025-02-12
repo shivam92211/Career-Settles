@@ -16,9 +16,18 @@ model User {
   role     Role
 }
 
+model Class {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique // Ensure class names are unique
+  subjects  Subject[]
+  createdAt DateTime  @default(now())
+}
+
 model Subject {
   id       Int       @id @default(autoincrement())
   name     String
+  class    Class     @relation(fields: [classId], references: [id])
+  classId  Int
   chapters Chapter[]
   createdAt DateTime @default(now())
 }

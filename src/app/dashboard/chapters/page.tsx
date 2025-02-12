@@ -1,5 +1,5 @@
-
 // src/app/dashboard/chapters/page.tsx
+
 'use client';
 import { Chapter, Subject } from "@/models/models"; // Import Chapter and Subject types
 import Link from "next/link";

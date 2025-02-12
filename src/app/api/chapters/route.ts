@@ -24,7 +24,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json(chapters, { status: 200 });
   } catch (error) {
-    console.error('Error fetching chapters:', error);
+    console.error('Error fetching chapters:', error?.message || 'Unknown error');
     return NextResponse.json(
       { error: 'Failed to fetch chapters' },
       { status: 500 }
@@ -32,11 +32,13 @@ export async function GET(req: Request) {
   }
 }
 
+
 // POST request to create a new chapter
 export async function POST(req: Request) {
   try {
     const { title, subjectId } = await req.json();
 
+    // Validate required fields
     if (!title || !subjectId) {
       return NextResponse.json(
         { error: 'Title and subject ID are required' },
@@ -44,6 +46,7 @@ export async function POST(req: Request) {
       );
     }
 
+    // Create the chapter and associate it with the subject
     const newChapter = await prisma.chapter.create({
       data: {
         title,
@@ -53,13 +56,10 @@ export async function POST(req: Request) {
 
     return NextResponse.json(newChapter, { status: 201 });
   } catch (error) {
-    console.error('Error creating chapter:', error);
+    console.error('Error creating chapter:', error?.message || 'Unknown error');
     return NextResponse.json(
       { error: 'Failed to create chapter' },
       { status: 500 }
     );
   }
 }
-
-
-

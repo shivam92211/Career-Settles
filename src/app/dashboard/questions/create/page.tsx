@@ -1,195 +1,5 @@
-// // src/app/dashboard/questions/create/page.tsx
-
-// 'use client';
-// import { useState, useEffect } from 'react';
-// import { useRouter } from 'next/navigation';
-// import axios from 'axios';
-// import DashboardLayout from '@/components/layouts/DashboardLayout';
-
-// interface Subject {
-//   id: number;
-//   name: string;
-// }
-
-// interface Chapter {
-//   id: number;
-//   title: string;
-// }
-
-// enum QuestionType {
-//   DPP = 'DPP',
-//   TEXTUAL = 'TEXTUAL',
-// }
-
-// export default function CreateQuestionPage() {
-//   const [content, setContent] = useState('');
-//   const [type, setType] = useState<QuestionType>(QuestionType.DPP);
-//   const [subjectId, setSubjectId] = useState<number | null>(null);
-//   const [chapterId, setChapterId] = useState<number | null>(null);
-//   const [subjects, setSubjects] = useState<Subject[]>([]);
-//   const [chapters, setChapters] = useState<Chapter[]>([]);
-//   const [options, setOptions] = useState<{ content: string; isCorrect: boolean }[]>([
-//     { content: '', isCorrect: false },
-//     { content: '', isCorrect: false },
-//     { content: '', isCorrect: false },
-//     { content: '', isCorrect: false },
-//   ]);
-//   const router = useRouter();
-
-//   // Fetch all subjects
-//   useEffect(() => {
-//     const fetchSubjects = async () => {
-//       try {
-//         const response = await axios.get<Subject[]>('/api/subjects');
-//         setSubjects(response.data);
-//       } catch (error) {
-//         console.error('Error fetching subjects:', error);
-//       }
-//     };
-//     fetchSubjects();
-//   }, []);
-
-//   // Fetch chapters based on selected subject
-//   useEffect(() => {
-//     const fetchChapters = async () => {
-//       if (subjectId) {
-//         try {
-//           const response = await axios.get<Chapter[]>(`/api/chapters?subjectId=${subjectId}`);
-//           setChapters(response.data);
-//         } catch (error) {
-//           console.error('Error fetching chapters:', error);
-//         }
-//       }
-//     };
-//     fetchChapters();
-//   }, [subjectId]);
-
-//   const handleOptionChange = (index: number, value: string) => {
-//     const newOptions = [...options];
-//     newOptions[index].content = value;
-//     setOptions(newOptions);
-//   };
-
-//   const handleCorrectOptionChange = (index: number) => {
-//     const newOptions = options.map((option, i) => ({
-//       ...option,
-//       isCorrect: i === index,
-//     }));
-//     setOptions(newOptions);
-//   };
-
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-  
-//     if (!subjectId || !chapterId) {
-//       alert('Please select a subject and chapter');
-//       return;
-//     }
-  
-//     if (options.some((option) => option.content === '')) {
-//       alert('Please fill all options');
-//       return;
-//     }
-  
-//     if (!options.some((option) => option.isCorrect)) {
-//       alert('Please select a correct option');
-//       return;
-//     }
-  
-//     try {
-//       const response = await axios.post('/api/questions', {
-//         content,
-//         type,
-//         chapterId,
-//         options,
-//       });
-  
-//       if (response.status === 201) {
-//         router.push('/dashboard/questions');
-//       }
-//     } catch (error) {
-//       console.error('Error creating question:', error);
-//     }
-//   };
-
-//   return (
-//     <DashboardLayout>
-//       <div>
-//       <h1>Create Question</h1>
-//       <form onSubmit={handleSubmit}>
-//         <label htmlFor="subject">Subject:</label>
-//         <select
-//           id="subject"
-//           value={subjectId || ''}
-//           onChange={(e) => setSubjectId(parseInt(e.target.value))}
-//         >
-//           <option value="">Select a subject</option>
-//           {subjects.map((subject) => (
-//             <option key={subject.id} value={subject.id}>
-//               {subject.name}
-//             </option>
-//           ))}
-//         </select>
-
-//         <label htmlFor="chapter">Chapter:</label>
-//         <select
-//           id="chapter"
-//           value={chapterId || ''}
-//           onChange={(e) => setChapterId(parseInt(e.target.value))}
-//         >
-//           <option value="">Select a chapter</option>
-//           {chapters.map((chapter) => (
-//             <option key={chapter.id} value={chapter.id}>
-//               {chapter.title}
-//             </option>
-//           ))}
-//         </select>
-
-//         <label htmlFor="content">Question:</label>
-//         <textarea
-//           id="content"
-//           value={content}
-//           onChange={(e) => setContent(e.target.value)}
-//         />
-
-//         <label>Options:</label>
-//         {options.map((option, index) => (
-//           <div key={index}>
-//             <input
-//               type="text"
-//               value={option.content}
-//               onChange={(e) => handleOptionChange(index, e.target.value)}
-//               placeholder={`Option ${index + 1}`}
-//             />
-//             <input
-//               type="radio"
-//               name="correctOption"
-//               checked={option.isCorrect}
-//               onChange={() => handleCorrectOptionChange(index)}
-//             />
-//             <label>Correct</label>
-//           </div>
-//         ))}
-
-//         <label htmlFor="type">Question Type:</label>
-//         <select
-//           id="type"
-//           value={type}
-//           onChange={(e) => setType(e.target.value as QuestionType)}
-//         >
-//           <option value={QuestionType.DPP}>DPP</option>
-//           <option value={QuestionType.TEXTUAL}>Textual</option>
-//         </select>
-
-//         <button type="submit">Create Question</button>
-//       </form>
-//     </div>
-//     </DashboardLayout>
-//   );
-// }
-
-
 // src/app/dashboard/questions/create/page.tsx
+
 
 'use client';
 import { useState, useEffect } from 'react';
@@ -204,30 +14,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'; // Import shadcn/ui RadioGroup
 import { Label } from '@/components/ui/label'; // Import shadcn/ui Label
 import { Loader2 } from 'lucide-react'; // Import loading spinner
-import { Subject, Chapter, QuestionType } from '@/models/models';
-
-// interface Subject {
-//   id: number;
-//   name: string;
-// }
-
-// interface Chapter {
-//   id: number;
-//   title: string;
-// }
-
-// enum QuestionType {
-//   DPP = 'DPP',
-//   TEXTUAL = 'TEXTUAL',
-// }
+import { Class, Subject, Chapter, QuestionType } from '@/models/models';
 
 export default function CreateQuestionPage() {
   const [content, setContent] = useState('');
   const [type, setType] = useState<QuestionType>(QuestionType.DPP);
-  const [subjectId, setSubjectId] = useState<number | null>(null);
-  const [chapterId, setChapterId] = useState<number | null>(null);
-  const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [chapters, setChapters] = useState<Chapter[]>([]);
+  const [classId, setClassId] = useState<number | null>(null); // State for selected class ID
+  const [subjectId, setSubjectId] = useState<number | null>(null); // State for selected subject ID
+  const [chapterId, setChapterId] = useState<number | null>(null); // State for selected chapter ID
+  const [classes, setClasses] = useState<Class[]>([]); // State for list of classes
+  const [subjects, setSubjects] = useState<Subject[]>([]); // State for list of subjects
+  const [chapters, setChapters] = useState<Chapter[]>([]); // State for list of chapters
   const [options, setOptions] = useState<{ content: string; isCorrect: boolean }[]>([
     { content: '', isCorrect: false },
     { content: '', isCorrect: false },
@@ -238,20 +35,37 @@ export default function CreateQuestionPage() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  // Fetch all subjects
+  // Fetch all classes on component mount
+  useEffect(() => {
+    const fetchClasses = async () => {
+      try {
+        const response = await axios.get<Class[]>('/api/classes');
+        setClasses(response.data);
+      } catch (error) {
+        console.error('Error fetching classes:', error);
+      }
+    };
+    fetchClasses();
+  }, []);
+
+  // Fetch subjects based on the selected class
   useEffect(() => {
     const fetchSubjects = async () => {
-      try {
-        const response = await axios.get<Subject[]>('/api/subjects');
-        setSubjects(response.data);
-      } catch (error) {
-        console.error('Error fetching subjects:', error);
+      if (classId) {
+        try {
+          const response = await axios.get<Subject[]>(`/api/subjects?classId=${classId}`);
+          setSubjects(response.data);
+        } catch (error) {
+          console.error('Error fetching subjects:', error);
+        }
+      } else {
+        setSubjects([]); // Reset subjects if no class is selected
       }
     };
     fetchSubjects();
-  }, []);
+  }, [classId]);
 
-  // Fetch chapters based on selected subject
+  // Fetch chapters based on the selected subject
   useEffect(() => {
     const fetchChapters = async () => {
       if (subjectId) {
@@ -261,6 +75,8 @@ export default function CreateQuestionPage() {
         } catch (error) {
           console.error('Error fetching chapters:', error);
         }
+      } else {
+        setChapters([]); // Reset chapters if no subject is selected
       }
     };
     fetchChapters();
@@ -282,25 +98,20 @@ export default function CreateQuestionPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!subjectId || !chapterId) {
-      setError('Please select a subject and chapter');
+    if (!classId || !subjectId || !chapterId) {
+      setError('Please select a class, subject, and chapter.');
       return;
     }
-
     if (options.some((option) => option.content === '')) {
-      setError('Please fill all options');
+      setError('Please fill all options.');
       return;
     }
-
     if (!options.some((option) => option.isCorrect)) {
-      setError('Please select a correct option');
+      setError('Please select a correct option.');
       return;
     }
-
     setIsLoading(true);
     setError(null);
-
     try {
       const response = await axios.post('/api/questions', {
         content,
@@ -308,13 +119,12 @@ export default function CreateQuestionPage() {
         chapterId,
         options,
       });
-
       if (response.status === 201) {
         router.push('/dashboard/questions');
       }
     } catch (error) {
       console.error('Error creating question:', error);
-      setError('Failed to create question');
+      setError('Failed to create question.');
     } finally {
       setIsLoading(false);
     }
@@ -329,10 +139,35 @@ export default function CreateQuestionPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Class Selection */}
+              <div className="space-y-2">
+                <Label htmlFor="class">Class</Label>
+                <Select
+                  value={classId?.toString() || ''}
+                  onValueChange={(value) => setClassId(parseInt(value))}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a class" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {classes.map((cls) => (
+                      <SelectItem key={cls.id} value={cls.id.toString()}>
+                        {cls.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               {/* Subject Selection */}
               <div className="space-y-2">
                 <Label htmlFor="subject">Subject</Label>
-                <Select onValueChange={(value) => setSubjectId(parseInt(value))}>
+                <Select
+                  value={subjectId?.toString() || ''}
+                  onValueChange={(value) => setSubjectId(parseInt(value))}
+                  required
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a subject" />
                   </SelectTrigger>
@@ -349,7 +184,11 @@ export default function CreateQuestionPage() {
               {/* Chapter Selection */}
               <div className="space-y-2">
                 <Label htmlFor="chapter">Chapter</Label>
-                <Select onValueChange={(value) => setChapterId(parseInt(value))}>
+                <Select
+                  value={chapterId?.toString() || ''}
+                  onValueChange={(value) => setChapterId(parseInt(value))}
+                  required
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a chapter" />
                   </SelectTrigger>
