@@ -1,47 +1,20 @@
-// import { NextResponse, NextRequest } from 'next/server';
-// import { prisma } from '@/lib/prisma';
-
-// export async function GET(request: NextRequest) {
-//   try {
-//     const id = request.nextUrl.pathname.split("/")[3];
-
-
-//     // Fetch the question paper by ID using Prisma
-//     const questionPaper = await prisma.questionPaper.findUnique({
-//       where: { id: parseInt(id) },
-//       include: {
-//         questions: true, // Include related questions if needed
-//       },
-//     });
-
-//     if (!questionPaper) {
-//       return NextResponse.json({ error: 'Question paper not found' }, { status: 404 });
-//     }
-
-//     return NextResponse.json(questionPaper);
-//   } catch (error) {
-//     console.error('Error fetching question paper:', error?.message || 'Unknown error');
-//     return NextResponse.json({ error: 'Failed to fetch question paper' }, { status: 500 });
-//   }
-// }
-
-
+// src/app/api/question-papers/[id]/route.ts
 
 import { NextResponse, NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  request: NextRequest
 ) {
+  const id = request.nextUrl.pathname.split('/')[3]
   try {
     // Validate ID format
-    if (!/^\d+$/.test(params.id)) {
+    if (!/^\d+$/.test(id)) {
       return NextResponse.json({ error: 'Invalid ID format' }, { status: 400 });
     }
 
     const questionPaper = await prisma.questionPaper.findUnique({
-      where: { id: parseInt(params.id) },
+      where: { id: parseInt(id) },
       include: { questions: true },
     });
 

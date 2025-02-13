@@ -22,7 +22,6 @@ export default function CreateQuestionPaperPage() {
   const [selectedQuestions, setSelectedQuestions] = useState<Question[]>([]);
   const [name, setName] = useState<string>(''); // Name of the question paper
   const [isLoading, setIsLoading] = useState(false);
-  // const router = useRouter();
 
   const handleAddQuestion = (question: Question) => {
     setSelectedQuestions((prev) =>
@@ -32,21 +31,20 @@ export default function CreateQuestionPaperPage() {
     );
   };
 
-  
   const handlePreviewPDF = async () => {
     if (!name || selectedQuestions.length === 0) {
       alert('Please provide a name and select at least one question.');
       return;
     }
-  
+
     setIsLoading(true);
-  
+
     try {
       const response = await axios.post('/api/question-papers/generate-pdf', {
         name,
-        questions: selectedQuestions, // Ensure this includes the `options` field
+        questions: selectedQuestions,
       }, { responseType: 'blob' });
-  
+
       const url = URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
       window.open(url, '_blank'); // Open the PDF in a new tab
     } catch (error) {
@@ -67,7 +65,7 @@ export default function CreateQuestionPaperPage() {
 
     try {
       const response = await axios.post('/api/question-papers/generate-pdf', {
-        name, // Include the name in the payload
+        name,
         questions: selectedQuestions,
       }, { responseType: 'blob' });
 
@@ -89,31 +87,31 @@ export default function CreateQuestionPaperPage() {
       alert('Please provide a name and select at least one question.');
       return;
     }
-  
+
     setIsLoading(true);
-  
+
     try {
       // Generate the PDF as a Blob
       const response = await axios.post('/api/question-papers/generate-pdf', {
         name,
         questions: selectedQuestions,
       }, { responseType: 'blob' });
-  
+
       const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-  
+
       // Create a FormData object to send the PDF and metadata
       const formData = new FormData();
       formData.append('name', name);
       formData.append('questions', JSON.stringify(selectedQuestions));
       formData.append('pdfFile', pdfBlob, `${name}.pdf`);
-  
+
       // Send the data to the backend for saving
       await axios.post('/api/question-papers/save', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-  
+
       alert('Question paper saved successfully!');
     } catch (error) {
       console.error('Error saving question paper:', error);
@@ -124,50 +122,46 @@ export default function CreateQuestionPaperPage() {
   };
 
   return (
-      <Card className="p-6">
-        <CardHeader>
-          <CardTitle>Create Question Paper</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {/* Name Input */}
-          <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
-            <Input
-              id="name"
-              type="text"
-              placeholder="Enter question paper name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </div>
-
-          {/* Class Selection */}
-          <ClassSelection onClassChange={setSelectedClassId} />
-
-          {/* Subject Selection */}
-          <SubjectSelection classId={selectedClassId} onSubjectChange={setSelectedSubjectId} />
-
-          {/* Question List */}
-          <QuestionList
-            subjectId={selectedSubjectId}
-            onAddQuestion={handleAddQuestion}
-            selectedQuestions={selectedQuestions}
+    <Card className="p-6">
+      <CardHeader>
+        <CardTitle>Create Question Paper</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {/* Name Input */}
+        <div className="space-y-2">
+          <Label htmlFor="name">Name</Label>
+          <Input
+            id="name"
+            type="text"
+            placeholder="Enter question paper name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
           />
-
-          {/* Buttons */}
-          <div className="mt-4 flex space-x-4">
-            <Button onClick={handlePreviewPDF} disabled={isLoading}>
-              {isLoading ? 'Generating...' : 'Preview PDF'}
-            </Button>
-            <Button onClick={handleGeneratePDF} disabled={isLoading}>
-              {isLoading ? 'Generating...' : 'Generate PDF'}
-            </Button>
-            <Button onClick={handleSavePDF} disabled={isLoading}>
-              {isLoading ? 'Saving...' : 'Save'}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+        {/* Class Selection */}
+        <ClassSelection onClassChange={setSelectedClassId} />
+        {/* Subject Selection */}
+        <SubjectSelection classId={selectedClassId} onSubjectChange={setSelectedSubjectId} />
+        {/* Question List */}
+        <QuestionList
+          subjectId={selectedSubjectId}
+          onAddQuestion={handleAddQuestion}
+          selectedQuestions={selectedQuestions}
+        />
+        {/* Buttons */}
+        <div className="mt-4 flex flex-col sm:flex-row gap-2">
+          <Button onClick={handlePreviewPDF} disabled={isLoading} className="w-full sm:w-auto">
+            {isLoading ? 'Generating...' : 'Preview PDF'}
+          </Button>
+          <Button onClick={handleGeneratePDF} disabled={isLoading} className="w-full sm:w-auto">
+            {isLoading ? 'Generating...' : 'Generate PDF'}
+          </Button>
+          <Button onClick={handleSavePDF} disabled={isLoading} className="w-full sm:w-auto">
+            {isLoading ? 'Saving...' : 'Save'}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
