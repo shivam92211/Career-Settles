@@ -1,8 +1,8 @@
+// src/app/api/question-papers/save/route.ts
+
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { writeFile } from 'fs/promises';
-import path from 'path';
-import fs from 'fs';
+import cloudinary from '@/lib/cloudinary';
 
 export async function POST(request: Request) {
   try {
@@ -13,22 +13,37 @@ export async function POST(request: Request) {
     const questions = JSON.parse(formData.get('questions') as string);
     const pdfFile = formData.get('pdfFile') as File;
 
-    // Ensure the uploads directory exists
-    const uploadDir = path.join(process.cwd(), 'public/uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true }); // Create the directory if it doesn't exist
+    if (!pdfFile) {
+      return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
-    // Save the PDF file to the server
-    const filePath = path.join(uploadDir, pdfFile.name);
+    // Upload the PDF file to Cloudinary
     const buffer = Buffer.from(await pdfFile.arrayBuffer());
-    await writeFile(filePath, buffer);
+    const cloudinaryResponse = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          resource_type: 'raw', // Specify raw for non-image files
+          folder: 'question-papers',
+          public_id: pdfFile.name,
+          transformation: [{ content_disposition: 'inline' }], // Ensure inline preview
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        }
+      ).end(buffer);
+    });
+
+    const cloudinaryData = cloudinaryResponse as { secure_url: string };
+
+    // Log the secure_url for debugging
+    console.log('Cloudinary URL:', cloudinaryData.secure_url);
 
     // Save the question paper metadata to the database
     const questionPaper = await prisma.questionPaper.create({
       data: {
         name,
-        filePath: `/uploads/${pdfFile.name}`, // Relative path to the uploaded file
+        filePath: cloudinaryData.secure_url, // Store the Cloudinary URL in the database
         questions: {
           connect: questions.map((q: { id: number }) => ({ id: q.id })),
         },

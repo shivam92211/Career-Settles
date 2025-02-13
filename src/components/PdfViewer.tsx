@@ -1,68 +1,36 @@
-// 'use client';
-// import { useEffect, useState } from 'react';
-
-// interface PdfViewerProps {
-//   filePath: string; // Relative path to the PDF file
-// }
-
-// export default function PdfViewer({ filePath }: PdfViewerProps) {
-//   const [pdfUrl, setPdfUrl] = useState<string>('');
-
-//   useEffect(() => {
-//     // Construct the full URL to the PDF file
-//     const baseUrl = window.location.origin;
-//     setPdfUrl(`${baseUrl}${filePath}`);
-//   }, [filePath]);
-
-//   return (
-//     <div>
-//       {pdfUrl ? (
-//         <iframe
-//           src={pdfUrl}
-//           width="100%"
-//           height="600px"
-//           title="PDF Preview"
-//           style={{ border: 'none' }}
-//         />
-//       ) : (
-//         <p>Loading PDF...</p>
-//       )}
-//     </div>
-//   );
-// }
-
-
-
+// src/components/PdfViewer.tsx
 
 'use client';
 import { useEffect, useState } from 'react';
 
 interface PdfViewerProps {
-  filePath: string; // Relative path to the PDF file
+  filePath: string; // Full URL to the PDF file on Cloudinary
 }
 
 export default function PdfViewer({ filePath }: PdfViewerProps) {
   const [pdfUrl, setPdfUrl] = useState<string>('');
 
   useEffect(() => {
-    // Construct the full URL to the PDF file
-    const baseUrl = window.location.origin;
-    setPdfUrl(`${baseUrl}${filePath}`);
+    setPdfUrl(filePath);
   }, [filePath]);
 
   return (
     <div>
       {pdfUrl ? (
-        <iframe
-          src={pdfUrl}
-          width="100%"
-          height="600px"
-          title="PDF Preview"
-          style={{ border: 'none' }}
-        />
+        <object data={pdfUrl} type="application/pdf" width="100%" height="600px">
+          <p>
+            Unable to display PDF.{' '}
+            <a href={pdfUrl} target="_blank" rel="noopener noreferrer">
+              Download PDF
+            </a>
+          </p>
+        </object>
       ) : (
         <p>Loading PDF...</p>
       )}
     </div>
   );
+  
 }
+
+

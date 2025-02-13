@@ -30,3 +30,4 @@ export default async function QuestionPaperPreviewPage({
     return <div>Failed to load question paper.</div>;
   }
 }
+
