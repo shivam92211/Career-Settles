@@ -1,4 +1,6 @@
-// components/layout/Hero.tsx
+// // components/layout/Hero.tsx
+
+import Link from "next/link";
 
 export default function Hero() {
     return (
@@ -10,10 +12,14 @@ export default function Hero() {
           <p className="text-xl text-blue-700 mb-8">
             A place where you can find amazing features and services.
           </p>
-          <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300">
-            Get Started
-          </button>
+          
+          <Link href="/question-papers">
+            <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300">
+              Get Started
+            </button>
+          </Link>
+          
         </div>
       </section>
     );
-  }
+}

@@ -15,6 +15,10 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         return <div>Please Login</div>;
     }
 
+
+        
+        
+
     return (
         <div className="flex h-screen bg-gray-100">
             {/* Sidebar Toggle Button (Mobile) */}

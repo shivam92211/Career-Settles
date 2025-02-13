@@ -4,8 +4,11 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
+
 
 export default function Navbar() {
+    const { data: session } = useSession();
     const [isMenuOpen, setIsMenuOpen] = useState(false); // State to manage mobile menu visibility
 
     return (
@@ -30,16 +33,32 @@ export default function Navbar() {
                             About
                         </Link>
                     </li>
+                    {(session?.user.role === "ADMIN") && (
                     <li>
                         <Link href="/dashboard" className="hover:text-blue-200 transition-colors duration-200">
                             Dashboard
                         </Link>
-                    </li>
+                    </li>)}
+
                     <li>
                         <Link href="/question-papers" className="hover:text-blue-200 transition-colors duration-200">
                             Paper
                         </Link>
                     </li>
+                    { session && (
+                    <li>
+                        <Button onClick={() => signOut()} className="hover:text-blue-200 transition-colors duration-200">
+                            Sign Out
+                        </Button>
+                    </li>
+                    )}
+                    {!session && (
+                        <li>
+                            <Link href="/login" className="hover:text-blue-200 transition-colors duration-200">
+                                Login
+                            </Link>
+                        </li>
+                    )}
                 </ul>
 
                 {/* Mobile Menu Toggle Button */}
@@ -72,14 +91,15 @@ export default function Navbar() {
                                 About
                             </Link>
                         </li>
-                        <li>
-                            <Link
-                                href="/dashboard"
-                                className="block p-2 hover:bg-blue-500 rounded transition-colors duration-200"
-                            >
-                                Dashboard
-                            </Link>
-                        </li>
+
+                        {(session?.user.role === "ADMIN") && (
+                            <li>
+                                <Link href="/dashboard" 
+                                className="block p-2 hover:bg-blue-500 rounded transition-colors duration-200">
+                                    Dashboard
+                                </Link>
+                        </li>)}
+
                         <li>
                             <Link
                                 href="/question-papers"
@@ -88,6 +108,22 @@ export default function Navbar() {
                                 Paper
                             </Link>
                         </li>
+                        { session && (
+                    <li>
+                        <Button onClick={() => signOut()}
+                            className="block p-2 hover:bg-blue-500 rounded transition-colors duration-200">
+                            Sign Out
+                        </Button>
+                    </li>
+                    )}
+                    {!session && (
+                        <li>
+                            <Link href="/login" 
+                            className="block p-2 hover:bg-blue-500 rounded transition-colors duration-200">
+                                Login
+                            </Link>
+                        </li>
+                    )}
                     </ul>
                 </div>
             )}
