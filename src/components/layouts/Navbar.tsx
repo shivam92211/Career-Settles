@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 
-
 export default function Navbar() {
     const { data: session } = useSession();
     const [isMenuOpen, setIsMenuOpen] = useState(false); // State to manage mobile menu visibility
@@ -15,11 +14,7 @@ export default function Navbar() {
         <nav className="bg-blue-600 p-4 text-white">
             <div className="container mx-auto flex justify-between items-center">
                 {/* Logo */}
-                {/* <h1 className="text-2xl font-bold">Career Settles</h1> */}
-                <div className="container mx-auto flex flex-col sm:flex-row sm:justify-between items-center text-center">
-                {/* Logo */}
-                    <h1 className="text-2xl sm:ml-12 xl:ml-2 font-bold">Career Settles</h1>
-                </div>
+                <h1 className="text-2xl font-bold">Career Settles</h1>
 
                 {/* Desktop Menu */}
                 <ul className="hidden lg:flex space-x-4">
@@ -34,29 +29,36 @@ export default function Navbar() {
                         </Link>
                     </li>
                     {(session?.user.role === "ADMIN") && (
-                    <li>
-                        <Link href="/dashboard" className="hover:text-blue-200 transition-colors duration-200">
-                            Dashboard
-                        </Link>
-                    </li>)}
-
+                        <li>
+                            <Link href="/dashboard" className="hover:text-blue-200 transition-colors duration-200">
+                                Dashboard
+                            </Link>
+                        </li>
+                    )}
                     <li>
                         <Link href="/question-papers" className="hover:text-blue-200 transition-colors duration-200">
                             Paper
                         </Link>
                     </li>
-                    { session && (
-                    <li>
-                        <Button onClick={() => signOut()} className="hover:text-blue-200 transition-colors duration-200">
-                            Sign Out
-                        </Button>
-                    </li>
-                    )}
-                    {!session && (
+                    {/* Conditional Rendering for Login/Sign Up or Sign Out */}
+                    {!session ? (
+                        <>
+                            <li>
+                                <Link href="/register" className="hover:text-blue-200 transition-colors duration-200">
+                                    Sign Up
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/login" className="hover:text-blue-200 transition-colors duration-200">
+                                    Login
+                                </Link>
+                            </li>
+                        </>
+                    ) : (
                         <li>
-                            <Link href="/login" className="hover:text-blue-200 transition-colors duration-200">
-                                Login
-                            </Link>
+                            <button onClick={() => signOut()} className="hover:text-blue-200 transition-colors duration-200 bg-transparent border-none">
+                                Sign Out
+                            </button>
                         </li>
                     )}
                 </ul>
@@ -91,15 +93,16 @@ export default function Navbar() {
                                 About
                             </Link>
                         </li>
-
                         {(session?.user.role === "ADMIN") && (
                             <li>
-                                <Link href="/dashboard" 
-                                className="block p-2 hover:bg-blue-500 rounded transition-colors duration-200">
+                                <Link
+                                    href="/dashboard"
+                                    className="block p-2 hover:bg-blue-500 rounded transition-colors duration-200"
+                                >
                                     Dashboard
                                 </Link>
-                        </li>)}
-
+                            </li>
+                        )}
                         <li>
                             <Link
                                 href="/question-papers"
@@ -108,22 +111,36 @@ export default function Navbar() {
                                 Paper
                             </Link>
                         </li>
-                        { session && (
-                    <li>
-                        <Button onClick={() => signOut()}
-                            className="block p-2 hover:bg-blue-500 rounded transition-colors duration-200">
-                            Sign Out
-                        </Button>
-                    </li>
-                    )}
-                    {!session && (
-                        <li>
-                            <Link href="/login" 
-                            className="block p-2 hover:bg-blue-500 rounded transition-colors duration-200">
-                                Login
-                            </Link>
-                        </li>
-                    )}
+                        {/* Conditional Rendering for Login/Sign Up or Sign Out */}
+                        {!session ? (
+                            <>
+                                <li>
+                                    <Link
+                                        href="/register"
+                                        className="block p-2 hover:bg-blue-500 rounded transition-colors duration-200"
+                                    >
+                                        Sign Up
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link
+                                        href="/login"
+                                        className="block p-2 hover:bg-blue-500 rounded transition-colors duration-200"
+                                    >
+                                        Login
+                                    </Link>
+                                </li>
+                            </>
+                        ) : (
+                            <li>
+                                <button
+                                    onClick={() => signOut()}
+                                    className="block p-2 hover:bg-blue-500 rounded transition-colors duration-200 w-full text-left bg-transparent border-none"
+                                >
+                                    Sign Out
+                                </button>
+                            </li>
+                        )}
                     </ul>
                 </div>
             )}

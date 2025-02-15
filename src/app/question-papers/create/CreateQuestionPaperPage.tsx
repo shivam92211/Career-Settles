@@ -155,10 +155,10 @@ export default function CreateQuestionPaperPage() {
             {isLoading ? 'Generating...' : 'Preview PDF'}
           </Button>
           <Button onClick={handleGeneratePDF} disabled={isLoading} className="w-full sm:w-auto">
-            {isLoading ? 'Generating...' : 'Generate PDF'}
+            {isLoading ? 'Generating...' : 'Download PDF'}
           </Button>
           <Button onClick={handleSavePDF} disabled={isLoading} className="w-full sm:w-auto">
-            {isLoading ? 'Saving...' : 'Save'}
+            {isLoading ? 'Saving...' : 'Save PDF'}
           </Button>
         </div>
       </CardContent>

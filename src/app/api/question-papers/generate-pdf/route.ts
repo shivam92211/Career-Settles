@@ -1,59 +1,115 @@
 // src/app/api/question-papers/generate-pdf/route.ts
+
 import { NextResponse } from 'next/server';
-import { PDFDocument } from 'pdf-lib';
+import { PDFDocument, StandardFonts } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
+
+function wrapText(text: string, maxWidth: number, font: any, fontSize: number): string[] {
+  // Remove any newline characters before processing:
+  text = text.replace(/\r?\n/g, ' ');
+  
+  const words = text.split(' ');
+  const lines: string[] = [];
+  let currentLine = '';
+
+  for (const word of words) {
+    const testLine = currentLine ? currentLine + ' ' + word : word;
+    const textWidth = font.widthOfTextAtSize(testLine, fontSize);
+
+    if (textWidth > maxWidth) {
+      lines.push(currentLine);
+      currentLine = word;
+    } else {
+      currentLine = testLine;
+    }
+  }
+
+  if (currentLine) lines.push(currentLine);
+  return lines;
+}
 
 export async function POST(req: Request) {
   try {
     const { questions } = await req.json();
 
-    // Create a new PDF document
+    // Create a new PDF document and register fontkit
     const pdfDoc = await PDFDocument.create();
     pdfDoc.registerFontkit(fontkit);
 
     // Add a page to the PDF
-    const page = pdfDoc.addPage([600, 800]); // Width: 600, Height: 800
+    let page = pdfDoc.addPage([600, 800]);
     const { height } = page.getSize();
 
-    // Define font size and margins
+    // Embed a standard font
+    const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+    // Define font size and initial vertical offset
     const fontSize = 12;
     let yOffset = height - 50;
 
-    // Add content to the PDF
-    questions.forEach((question: any, index: number) => {
-      const text = `${index + 1}. ${question.content}`;
-      page.drawText(text, {
-        x: 50,
-        y: yOffset,
-        size: fontSize,
-      });
-      yOffset -= 20; // Move down for the next line
+    for (let i = 0; i < questions.length; i++) {
+      const question = questions[i];
+      const questionNumber = i + 1;
 
-    
-      // const getOptionLabel = (index: number): string => {
-      //   const firstChar = String.fromCharCode(97 + Math.floor(index / 26)); // 'a' to 'z'
-      //   const secondChar = String.fromCharCode(97 + (index % 26)); // 'a' to 'z'
-      //   return index < 26 ? `(${firstChar})` : `(${firstChar}${secondChar})`;
-      // };
+      // Wrap the question text
+      const wrappedLines = wrapText(
+        `${questionNumber}. ${question.content}`,
+        500,
+        helveticaFont,
+        fontSize
+      );
 
-      // Add options (if available)
-      if (question.options && question.options.length > 0) {
-        let xOffset = 50; // Start at x = 50
-        question.options.forEach((option: any, index: number) => {
-          const label = String.fromCharCode(97 + index); // Convert index to 'a', 'b', 'c', etc.
-          const optionText = `(${label}) ${option.content}`; // Add the label before the option content
-          page.drawText(optionText, {
-            x: xOffset,
-            y: yOffset,
-            size: fontSize,
-          });
-          xOffset += 120; // Move horizontally for the next option (adjust spacing as needed)
+      // Draw each line of the question
+      for (const line of wrappedLines) {
+        // If there's not enough space on the current page, add a new one
+        if (yOffset < 60) {
+          page = pdfDoc.addPage([600, 800]);
+          yOffset = 750;
+        }
+        page.drawText(line, {
+          x: 50,
+          y: yOffset,
+          size: fontSize,
+          font: helveticaFont,
         });
-        yOffset -= 30; // Move down after all options are rendered
+        yOffset -= 20;
       }
 
-      // Add spacing between questions
-    });
+      // Add a little extra space before listing options
+      yOffset -= 10;
+
+      // Draw options vertically (each option on a new line)
+      if (question.options && question.options.length > 0) {
+        question.options.forEach((option: any, idx: number) => {
+          // Check if there's enough vertical space
+          if (yOffset < 60) {
+            page = pdfDoc.addPage([600, 800]);
+            yOffset = 750;
+          }
+          const label = String.fromCharCode(97 + idx); // 'a', 'b', 'c', ...
+          const optionText = `(${label}) ${option.content}`;
+
+          // Optionally, wrap the option text if needed
+          const wrappedOptionLines = wrapText(optionText, 500, helveticaFont, fontSize);
+          wrappedOptionLines.forEach((optLine) => {
+            if (yOffset < 60) {
+              page = pdfDoc.addPage([600, 800]);
+              yOffset = 750;
+            }
+            // Draw the option text indented from the question
+            page.drawText(optLine, {
+              x: 70,
+              y: yOffset,
+              size: fontSize,
+              font: helveticaFont,
+            });
+            yOffset -= 20;
+          });
+        });
+        // Additional space after options
+        yOffset -= 10;
+      }
+    }
 
     // Serialize the PDF to bytes
     const pdfBytes = await pdfDoc.save();
