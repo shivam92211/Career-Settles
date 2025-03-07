@@ -4,44 +4,25 @@ import { NextResponse, NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 
-
-export async function GET(
-  request: NextRequest,
-) {
-
+export async function GET(req: NextRequest) {
   try {
-    const url = request.nextUrl.href
-    console.log({ url });
-    const id = request.nextUrl.pathname.split('/')[3];
+    // const chapterId = parseInt(params.id);
+    const id = req.nextUrl.pathname.split('/')[3];
     console.log({ id });
-    // Validate and parse the ID
-    const chapterId = parseInt(id);
-    if (isNaN(chapterId)) {
-      return NextResponse.json({ error: 'Invalid chapter ID' }, { status: 400 });
-    }
 
-    // Fetch the chapter from the database
-    const chapter = await prisma.chapter.findUnique({
-      where: { id: chapterId },
+    const chapterId = parseInt(id);
+
+    // Fetch questions with their options
+    const questions = await prisma.question.findMany({
+      where: { chapterId },
       include: {
-        subject: true, // Include the associated subject
-        questions: true, // Include the associated questions
-        questionPapers: true, // Include the associated question papers
+        options: true, // Ensure options are included
       },
     });
 
-    // If the chapter is not found, return a 404 error
-    if (!chapter) {
-      return NextResponse.json({ error: 'Chapter not found' }, { status: 404 });
-    }
-
-    // Return the chapter as a JSON response
-    return NextResponse.json(chapter);
+    return NextResponse.json(questions, { status: 200 });
   } catch (error) {
-    console.error('Error fetching chapter:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch chapter' },
-      { status: 500 }
-    );
+    console.error('Error fetching questions:', error);
+    return NextResponse.json({ error: 'Failed to fetch questions' }, { status: 500 });
   }
 }

@@ -1,7 +1,5 @@
 // // src/app/layout.tsx
 
-
-
 import Navbar from "@/components/layouts/Navbar";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
@@ -9,8 +7,8 @@ import Footer from "@/components/layouts/Footer";
 
 
 export const metadata = {
-  title: "Career Settle",
-  description: "Question Paper Management",
+  title: "Edu Smart",
+  description: "One Step Solutions to all you Papers",
 };
 
 

@@ -71,3 +71,73 @@ export async function POST(req: Request) {
   }
 }
 
+
+
+// src/app/api/questions/route.ts
+
+export async function PUT(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id'); // Extract the question ID from query params
+    const { content, type, options } = await req.json();
+
+    // Validate input
+    if (!id || isNaN(parseInt(id))) {
+      return NextResponse.json({ error: 'Invalid question ID' }, { status: 400 });
+    }
+    if (!content || !type || !Array.isArray(options)) {
+      return NextResponse.json(
+        { error: 'Content, type, and options are required' },
+        { status: 400 }
+      );
+    }
+
+    // Update the question and its options
+    const updatedQuestion = await prisma.question.update({
+      where: { id: parseInt(id) },
+      data: {
+        content,
+        type,
+        options: {
+          deleteMany: {}, // Delete existing options
+          create: options.map((option: { content: string; isCorrect: boolean }) => ({
+            content: option.content,
+            isCorrect: option.isCorrect,
+          })),
+        },
+      },
+    });
+
+    return NextResponse.json(updatedQuestion, { status: 200 });
+  } catch (error) {
+    console.error('Error updating question:', error?.message || 'Unknown error');
+    return NextResponse.json({ error: 'Failed to update question' }, { status: 500 });
+  }
+}
+
+
+
+
+// src/app/api/questions/route.ts
+
+export async function DELETE(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id'); // Extract the question ID from query params
+
+    // Validate input
+    if (!id || isNaN(parseInt(id))) {
+      return NextResponse.json({ error: 'Invalid question ID' }, { status: 400 });
+    }
+
+    // Delete the question and its associated options
+    await prisma.question.delete({
+      where: { id: parseInt(id) },
+    });
+
+    return NextResponse.json({ message: 'Question deleted successfully' }, { status: 200 });
+  } catch (error) {
+    console.error('Error deleting question:', error?.message || 'Unknown error');
+    return NextResponse.json({ error: 'Failed to delete question' }, { status: 500 });
+  }
+}

@@ -14,7 +14,11 @@ export default function Navbar() {
         <nav className="bg-blue-600 p-4 text-white">
             <div className="container mx-auto flex justify-between items-center">
                 {/* Logo */}
-                <h1 className="text-2xl font-bold">Career Settles</h1>
+                <div className="flex items-center">
+                <img src="/logo.png" alt="Edu Smart Logo" className="h-8 w-auto" />
+                <h1 className="text-2xl font-bold pl-2 ml-2">Edu Smart</h1>
+                </div>
+                
 
                 {/* Desktop Menu */}
                 <ul className="hidden lg:flex space-x-4">
@@ -64,6 +68,7 @@ export default function Navbar() {
                 </ul>
 
                 {/* Mobile Menu Toggle Button */}
+
                 <Button
                     variant="ghost"
                     className="lg:hidden p-2"
@@ -71,6 +76,7 @@ export default function Navbar() {
                 >
                     {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                 </Button>
+
             </div>
 
             {/* Mobile Menu */}

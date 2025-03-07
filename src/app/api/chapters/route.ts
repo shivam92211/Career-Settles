@@ -63,3 +63,60 @@ export async function POST(req: Request) {
     );
   }
 }
+
+
+
+// src/app/api/chapters/route.ts
+
+export async function PUT(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id'); // Extract the chapter ID from query params
+    const { title } = await req.json();
+
+    // Validate input
+    if (!id || isNaN(parseInt(id))) {
+      return NextResponse.json({ error: 'Invalid chapter ID' }, { status: 400 });
+    }
+    if (!title || typeof title !== 'string') {
+      return NextResponse.json({ error: 'Chapter title is required and must be a string' }, { status: 400 });
+    }
+
+    // Update the chapter in the database
+    const updatedChapter = await prisma.chapter.update({
+      where: { id: parseInt(id) },
+      data: { title },
+    });
+
+    return NextResponse.json(updatedChapter, { status: 200 });
+  } catch (error) {
+    console.error('Error updating chapter:', error?.message || 'Unknown error');
+    return NextResponse.json({ error: 'Failed to update chapter' }, { status: 500 });
+  }
+}
+
+
+
+// src/app/api/chapters/route.ts
+
+export async function DELETE(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id'); // Extract the chapter ID from query params
+
+    // Validate input
+    if (!id || isNaN(parseInt(id))) {
+      return NextResponse.json({ error: 'Invalid chapter ID' }, { status: 400 });
+    }
+
+    // Delete the chapter from the database
+    await prisma.chapter.delete({
+      where: { id: parseInt(id) },
+    });
+
+    return NextResponse.json({ message: 'Chapter deleted successfully' }, { status: 200 });
+  } catch (error) {
+    console.error('Error deleting chapter:', error?.message || 'Unknown error');
+    return NextResponse.json({ error: 'Failed to delete chapter' }, { status: 500 });
+  }
+}
